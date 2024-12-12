@@ -1,12 +1,18 @@
 import mongoose from 'mongoose';
 
 const connectDB = (url) => {
+  if (!url) {
+    console.error('MongoDB URL is undefined. Please check your environment variables.');
+    return;
+  }
+
   mongoose.set('strictQuery', true);
+
   mongoose.connect(url)
-    .then(() => console.log('connected to mongo'))
+    .then(() => console.log('Connected to MongoDB'))
     .catch((err) => {
-      console.error('failed to connect with mongo');
-      console.error(err);
+      console.error('Failed to connect to MongoDB');
+      console.error('Error Message:', err.message);
     });
 };
 

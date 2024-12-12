@@ -3,6 +3,8 @@ import { v2 as cloudinary } from 'cloudinary'
 import * as dotenv from 'dotenv'
 
 import Post from '../MongoDb/Model/post.js'
+import User from '../MongoDb/Model/User.js'
+import { auth } from '../Middleware/auth.js'
 
 dotenv.config();
 
@@ -25,7 +27,7 @@ router.route('/').get(async (req, res) => {
     }
 })
 
-router.route('/').post(async (req, res) => {
+router.route('/').post(auth, async (req, res) => {
     try {
         const { name, prompt, photo } = req.body;
 
@@ -37,9 +39,10 @@ router.route('/').post(async (req, res) => {
             photo: photoUrl.url,
         })
 
+
         res.status(200).json({ success: true, data: newPost });
     } catch (error) {
-        res.status(500).json({ success: false, messsage: error.messsage })
+        res.status(500).json({ success: false, message: error.message })
     }
 })
 
