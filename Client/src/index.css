@@ -21,3 +21,13 @@
   background-color: #666e75;
   border-radius: 5px;
 }
+
+html, body {
+    height: 100%;
+    overflow-y: auto; /* Allow vertical scrolling */
+  }
+  
+#root {
+  width: 100%;
+  height: 100%;
+}

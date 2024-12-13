@@ -27,7 +27,7 @@ const Home = () => {
             setLoading(true);
 
             try {
-                const response = await fetch('http://localhost:8080/api/v1/post', {
+                const response = await fetch('https://dall-e-mini-dl1e-fz0x36l80-shivam-guptas-projects-f99d138a.vercel.app/api/v1/post', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',

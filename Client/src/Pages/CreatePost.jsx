@@ -1,106 +1,132 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import preview from '../assets/preview.png';
 import { useNavigate } from 'react-router-dom';
 import FormField from '../Components/FormField';
 import Loader from '../Components/Loader';
 import { getRandomPrompts } from '../Components/utils';
-import axios from 'axios'
 
 const CreatePost = () => {
-
-  const BASE_URL = "http://localhost:8080"
   const navigate = useNavigate();
-  
-  const [form, setForm] = useState({
-    name: "",
-    prompt: "",
-    photo: ""  // Store the generated image URL here
-  })
-  
-  const [generatingImg, setGeneratingImg] = useState(false);
-  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async(e) => {
-     
+  const [form, setForm] = useState({
+    name: '',
+    prompt: '',
+    photo: '', // Store the generated image URL here
+  });
+
+  const [generatingImg, setGeneratingImg] = useState(false);
+  const [loading, setLoading] = useState(false); 
+
+  // Generate Image with backend API
+  const generateImage = async () => {
+    if (!form.prompt) {
+      alert('Please provide a valid prompt');
+      return;
+    }
+  
+    setGeneratingImg(true);
+  
+    const token = localStorage.getItem('token');  // Make sure the token is saved correctly in localStorage
+    if (!token) {
+      alert('Please log in first');
+      setGeneratingImg(false);
+      return;
+    }
+  
+    try {
+      const response = await fetch('https://dall-e-mini-dl1e-fz0x36l80-shivam-guptas-projects-f99d138a.vercel.app/api/v1/dalle', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,  // Add token in Authorization header
+        },
+        body: JSON.stringify({
+          prompt: form.prompt,
+        }),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok && data.success) {
+        setForm({ ...form, photo: data.photo });
+      } else {
+        alert(data.message || 'Image generation failed');
+      }
+    } catch (error) {
+      console.error('Error generating image:', error);
+      alert('Failed to generate the image. Please try again.');
+    } finally {
+      setGeneratingImg(false);
+    }
+  };
+  
+
+  // Submit form to backend to save image and prompt
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if(form.prompt && form.photo){
-      setLoading(true);
+    if (form.prompt && form.photo) {
+        setLoading(true);
 
-      try {
-        const response = await fetch('http://localhost:8080/api/v1/post',{
-          method: 'POST',
-          headers:{
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(form)
-        })
+        const token = localStorage.getItem('token');
+        console.log('Retrieved Token from localStorage:', token); // Log token for debugging
 
-        await response.json();
-        navigate('/');
-      } catch (error) {
-        alert(error)
-      }finally{
-        setLoading(false);
-      }
-    }else{
-       alert('Please enter a prompt and generate an image')
+        if (!token) {
+            alert('Please log in first');
+            return;
+        }
+
+        try {
+            const response = await fetch('https://dall-e-mini-dl1e-fz0x36l80-shivam-guptas-projects-f99d138a.vercel.app/api/v1/post', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`, // Add the token here
+                },
+                body: JSON.stringify({
+                    name: form.name, // Add name field
+                    prompt: form.prompt,
+                    photo: form.photo,
+                }),
+            });
+
+            const data = await response.json();
+
+            console.log('Post Creation Response:', data); // Log response from the backend
+
+            if (response.ok && data.success) {
+                navigate('/dashboard')
+            } else {
+                alert(data.message || 'Post creation failed');
+            }
+        } catch (error) {
+            console.error('Error creating post:', error);
+            alert('Failed to create the post. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    } else {
+        alert('Please enter a prompt and generate an image first');
     }
+};
 
-  }
+  
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
-  }
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   const handleSurpriseMe = () => {
     const randomPrompt = getRandomPrompts(form.prompt);
     setForm({ ...form, prompt: randomPrompt });
-  }
-
-  const generateImage = async (prompt) => {
-    if (!prompt) {
-      alert('Please provide a valid prompt');
-      return;
-    }
-
-    setGeneratingImg(true); // Show the loader when the image is being generated
-
-    try {
-      const response = await fetch('https://api.deepai.org/api/text2img', {
-        method: 'POST',
-        headers: {
-          'api-key': '7c53799d-6c15-4722-b186-df581c0546b5', // Your API key
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ text: prompt }),  // Send the prompt to the API
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to generate image. ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      console.log('Generated Image:', data);
-      
-      // Update the form state with the generated image URL
-      setForm({ ...form, photo: data.output_url });
-
-    } catch (error) {
-      console.error('Error generating image:', error);
-    } finally {
-      setGeneratingImg(false); // Hide the loader once the image is generated
-    }
   };
 
   return (
     <section className='max-w-7xl mx-auto'>
       <div>
-        <h1 className='font-extrabold text-[#222328] text-[32px]'>
-          Create
-        </h1>
+        <h1 className='font-extrabold text-[#222328] text-[32px]'>Create</h1>
         <p className='mt-2 text-[#666e75] text-[16px] max-w-[500px]'>
-          Create imaginative and visually stunning images through DALL-E AI and share them with the community
+          Create imaginative and visually stunning images through DALL-E AI and share them with the community.
         </p>
       </div>
 
@@ -144,21 +170,33 @@ const CreatePost = () => {
         <div className='mt-5 flex gap-5'>
           <button
             type='button'
-            onClick={() => generateImage(form.prompt)}  // Pass the prompt state here
+            onClick={generateImage}
             className='text-white bg-green-700 font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center'
           >
-            {generatingImg ? "Generating...": "Generate"}
+            {generatingImg ? 'Generating...' : 'Generate'}
           </button>
         </div>
 
         <div className='mt-10'>
-          <p className='mt-2 text-[#666e75] text-[14px]'>Once you have created the image you want, you can share it with others in the community</p>
+          <p className='mt-2 text-[#666e75] text-[14px]'>
+            Once you have created the image you want, you can share it with others in the community.
+          </p>
+
+          <div className='space-x-8 mb-10'>
           <button
             type='submit'
             className='mt-3 text-white bg-[#6469ff] font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center'
-          >
-            {loading ? "Sharing..." : "Share with the community"}
+            >
+            {loading ? 'Sharing...' : 'Share with the community'}
           </button>
+
+          <button onClick={()=> navigate("/your-images")}
+          className="mt-6 rounded-[8px] bg-[#22c55e] py-[8px] px-[12px] font-medium text-white mb-10"
+          >
+            Your Generated Images
+          </button>
+          </div>
+
         </div>
       </form>
     </section>
