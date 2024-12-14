@@ -11,7 +11,7 @@ import cors from 'cors'
 
 const app = express();
 const corsOptions = {
-  origin: ['http://localhost:5173', 'https://dall-e-mini-dl1e-fz0x36l80-shivam-guptas-projects-f99d138a.vercel.app'], // Local and deployed frontend
+  origin: ['http://localhost:5173', 'https://dall-e-mini-dl1e-git-main-shivam-guptas-projects-f99d138a.vercel.app'], // Local and deployed frontend
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true, // Include if using cookies or sessions

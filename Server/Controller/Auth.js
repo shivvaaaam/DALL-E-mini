@@ -45,12 +45,14 @@ export const signup = async (signupData) => {
 
 
 
-export const login = async (req, res) => {
-
+  export const login = async (req, res) => {
     const { email, password } = req.body;
 
     try {
+        console.log("Incoming login request:", { email, password });
+
         if (!email || !password) {
+            console.log("Missing email or password");
             return res.status(500).json({
                 success: false,
                 message: "Please fill all the details",
@@ -58,55 +60,56 @@ export const login = async (req, res) => {
         }
 
         const user = await User.findOne({ email });
-
         if (!user) {
+            console.log(`User not found with email: ${email}`);
             return res.status(401).json({
                 success: false,
                 message: "Email is not registered",
             });
         }
 
-        const payload = {
-            email: user.email,
-            id: user._id,
+        console.log("User found:", { email: user.email, id: user._id });
+        console.log("Password from DB:", user.password);
 
-        }
-
-        if (await bcrypt.compare(password, user.password)) {
-
-            let token = jwt.sign(payload, process.env.JWT_SECRET,
-                {
-                    expiresIn: "2h"
-                })
-
-            // user = user.toObject(); // Convert user document to plain object
-            user.token = token;
-            user.password = undefined;
-
-            const options = {
-                expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-                httpOnly: true
-            }
-
-            res.cookie("token", token, options).status(200).json({
-                success: true,
-                token,
-                user,
-                message: "User logged in successfully"
-            })
-        } else {
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if (!passwordMatch) {
+            console.log("Incorrect password for email:", email);
             return res.status(403).json({
                 success: false,
                 message: "Incorrect Password",
             });
         }
 
+        const payload = {
+            email: user.email,
+            id: user._id,
+        };
 
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "2h" });
+        console.log("JWT token generated:", token);
+
+        const options = {
+            expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+            httpOnly: true,
+        };
+
+        user.password = undefined;
+        console.log("Sending successful response with user data");
+        res.cookie("token", token, options).status(200).json({
+            success: true,
+            token,
+            user,
+            message: "User logged in successfully",
+        });
 
     } catch (error) {
+        // Enhanced logging for debugging purposes
+        console.error("Error during login:", error.message);
+        console.error("Error stack trace:", error.stack);
+
         return res.status(500).json({
             success: false,
-            message: "Cannot Login, please try again later"
-        })
+            message: "Cannot Login, please try again later",
+        });
     }
-}
+};
