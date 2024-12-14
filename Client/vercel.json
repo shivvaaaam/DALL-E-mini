@@ -1,12 +1,19 @@
 {
   "version": 2,
-  "env": {
-    "NODE_ENV": "production"
-  },
   "builds": [
     {
-      "src": "index.js",
+      "src": "index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "package.json",
       "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
