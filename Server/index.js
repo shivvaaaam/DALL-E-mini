@@ -1,5 +1,4 @@
 import express from 'express'
-import cors from 'cors'
 import *as dotenv from 'dotenv'
 import postRoutes from './routes/postRoutes.js'
 import dalleRoutes from './routes/dalleRoutes.js'
@@ -7,15 +6,20 @@ import connectDB from './MongoDb/Connect.js'
 import authRoute from './routes/user.js'
 import otpRoute from './routes/otpRoute.js'
 import { auth } from './Middleware/auth.js'
-
 dotenv.config();
+import cors from 'cors'
 
 const app = express();
-app.use(cors({
-  origin: '*', // Or use 'http://localhost:5173' if you need to restrict it during development
+const corsOptions = {
+  origin: ['http://localhost:5173', 'https://dall-e-mini-dl1e-fz0x36l80-shivam-guptas-projects-f99d138a.vercel.app'], // Local and deployed frontend
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+  credentials: true, // Include if using cookies or sessions
+};
+app.use(cors(corsOptions));
+
+
+
 app.use(express.json({ limit: '50mb' }));
 
 app.use('/api/v1/post', postRoutes);
