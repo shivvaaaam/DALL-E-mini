@@ -11,12 +11,17 @@ import cors from 'cors'
 
 const app = express();
 const corsOptions = {
-  origin: ['https://dall-e-mini-dl1e-git-main-shivam-guptas-projects-f99d138a.vercel.app'], // Local and deployed frontend
+  origin: ['https://dall-e-mini-dl1e-git-main-shivam-guptas-projects-f99d138a.vercel.app'], // Array of allowed origins
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true, // Include if using cookies or sessions
 };
+
 app.use(cors(corsOptions));
+
+
+app.use(cors(corsOptions));
+
 
 
 
