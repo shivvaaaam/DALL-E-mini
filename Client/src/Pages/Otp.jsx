@@ -34,7 +34,7 @@ const Otp = () => {
     try {
       setLoading(true);
 
-      const response = await fetch("https://dall-e-mini-dl1e-git-main-shivam-guptas-projects-f99d138a.vercel.app/api/v1/verify-otp", {
+      const response = await fetch("https://dall-e-mini.onrender.com/api/v1/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" }, 
         body: JSON.stringify({ 
@@ -89,7 +89,7 @@ const Otp = () => {
     try {
       setLoading(true);
 
-      const response = await fetch("https://dall-e-mini-dl1e-git-main-shivam-guptas-projects-f99d138a.vercel.app/api/v1/send-otp", {
+      const response = await fetch("https://dall-e-mini.onrender.com/api/v1/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: signupData.email }),

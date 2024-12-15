@@ -23,7 +23,7 @@ export const Login = () => {
     
 
     try {
-      const response = await fetch("https://dall-e-mini-dl1e-git-main-shivam-guptas-projects-f99d138a.vercel.app/api/v1/login", {
+      const response = await fetch("https://dall-e-mini.onrender.com/api/v1/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

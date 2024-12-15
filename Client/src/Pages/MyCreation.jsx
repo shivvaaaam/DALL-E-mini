@@ -17,7 +17,7 @@ const MyCreation = () => {
                     return;
                 }
 
-                const response = await fetch('https://dall-e-mini-dl1e-git-main-shivam-guptas-projects-f99d138a.vercel.app/api/v1/myimages', {
+                const response = await fetch('https://dall-e-mini.onrender.com/api/v1/myimages', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
