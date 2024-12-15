@@ -11,7 +11,7 @@ import cors from 'cors'
 
 const app = express();
 const corsOptions = {
-  origin: ['http://localhost:8080'], // Array of allowed origins
+  origin: ['https://rad-longma-b4a5ec.netlify.app'], // Array of allowed origins
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true, // Include if using cookies or sessions
